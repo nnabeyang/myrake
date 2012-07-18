@@ -33,6 +33,18 @@ class MyRakeTests < Test::Unit::TestCase
     assert_equal ["t2", "t1"], tlist 
     ARGV.clear
   end
+  def test_application_run_default
+    ARGV.clear
+    tlist = []
+    app = MyRake::Application.new
+    [:t1, :t2, :t3].each {|task_name|
+      app.define_task(MyRake::Task, task_name) {|t| tlist << t.name }
+    }
+    app.define_task(MyRake::Task, :default) {|t| tlist << t.name }
+    app.run
+    assert_equal ["default"], tlist 
+  end
+
   def test_application_clear
      app = MyRake::Application.new
     [:t1, :t2, :t3].each {|task_name|
