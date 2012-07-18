@@ -14,4 +14,11 @@ class MyRakeTests < Test::Unit::TestCase
     t.invoke
     assert ran
   end
+  def test_application_define_task
+    app = MyRake::Application.new
+    [:t1, :t2, :t3].each {|task_name|
+      app.define_task(MyRake::Task, task_name) {}
+    }
+    assert_equal ["t1", "t2", "t3"], app.tasks.keys
+  end
 end
