@@ -1,0 +1,3 @@
+- MyRake::application.runすると、指定したtask nameを実行する。
+  usage: myrake [task_name]+
+- tasksをプライベートにする 
