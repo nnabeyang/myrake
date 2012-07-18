@@ -4,6 +4,7 @@ module MyRake
      @application ||= Application.new
     end
   end
+  DEFAULT_RAKEFILE = 'Rakefile'
   class Application
     attr_reader :tasks
     def initialize
@@ -19,6 +20,9 @@ module MyRake
     end
     def clear
       @tasks.clear
+    end
+    def load_rakefile
+      load DEFAULT_RAKEFILE if File.exist? DEFAULT_RAKEFILE
     end
   end
   class Task

@@ -49,4 +49,12 @@ class MyRakeTests < Test::Unit::TestCase
     assert ran
     MyRake.application.clear
   end
+  def test_load_rakefile
+    original_dir = Dir.pwd
+    Dir.chdir(File.expand_path('../data', __FILE__))
+    MyRake.application.load_rakefile
+    assert_equal ["default", "t1", "t2"], MyRake.application.tasks.keys
+    Dir.chdir(original_dir)
+    MyRake.application.clear
+  end
 end
