@@ -7,6 +7,11 @@ module MyRake
     def define_task(task_class, task_name, &block)
       @tasks[task_name.to_s] = task_class.new(task_name, &block)
     end
+    def run
+      ARGV.each {|task_name|
+        @tasks[task_name].invoke
+      }
+    end
   end
   class Task
     attr_reader :name

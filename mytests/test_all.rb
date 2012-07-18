@@ -21,4 +21,17 @@ class MyRakeTests < Test::Unit::TestCase
     }
     assert_equal ["t1", "t2", "t3"], app.tasks.keys
   end
+  def test_application_run
+    ARGV.clear
+    ARGV << "t2" << "t1"
+    tlist = []
+    app = MyRake::Application.new
+    [:t1, :t2, :t3].each {|task_name|
+      app.define_task(MyRake::Task, task_name) {|t| tlist << t.name }
+    }
+    app.run
+    assert_equal ["t2", "t1"], tlist 
+    ARGV.clear
+  end
+
 end
