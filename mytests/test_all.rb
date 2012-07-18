@@ -42,4 +42,11 @@ class MyRakeTests < Test::Unit::TestCase
     app.clear
     assert_equal({}, app.tasks)
   end
+  def test_task
+    ran = false
+    t = task(:t1) { ran = true}
+    t.invoke
+    assert ran
+    MyRake.application.clear
+  end
 end

@@ -1,4 +1,9 @@
 module MyRake  
+  class << self
+    def application
+     @application ||= Application.new
+    end
+  end
   class Application
     attr_reader :tasks
     def initialize
@@ -25,6 +30,13 @@ module MyRake
     def invoke
       @action.call(self)
     end
+    class << self
+      def define_task(task_name, &block)
+         MyRake.application.define_task(self, task_name, &block)
+      end
+    end
   end
 end
-
+def task(task_name, &block)
+  MyRake::Task.define_task(task_name, &block)
+end
