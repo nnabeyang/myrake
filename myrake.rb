@@ -12,6 +12,9 @@ module MyRake
         @tasks[task_name].invoke
       }
     end
+    def clear
+      @tasks.clear
+    end
   end
   class Task
     attr_reader :name
