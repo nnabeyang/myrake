@@ -1,7 +1,7 @@
 $last_dir = Dir.pwd
 $test_dir = 'mytests'
 def notify(fn)
-  result = `make 2>&1`
+  result = `./myrake 2>&1`
   dir = $last_dir
   $last_dir = Dir.pwd
   Dir.chdir(dir)
