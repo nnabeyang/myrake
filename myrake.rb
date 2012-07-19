@@ -14,6 +14,7 @@ module MyRake
       @tasks[task_name.to_s] = task_class.new(task_name, &block)
     end
     def run
+      load_rakefile
       ARGV << "default" if ARGV.empty?
       ARGV.each {|task_name|
         @tasks[task_name].invoke
@@ -23,7 +24,8 @@ module MyRake
       @tasks.clear
     end
     def load_rakefile
-      load DEFAULT_RAKEFILE if File.exist? DEFAULT_RAKEFILE
+      path = File.expand_path(DEFAULT_RAKEFILE)
+      load path if File.exist? path
     end
   end
   class Task
