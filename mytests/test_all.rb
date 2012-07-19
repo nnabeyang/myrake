@@ -66,7 +66,7 @@ class MyRakeTests < Test::Unit::TestCase
     assert_equal [:t1, [:t2, :t3]], app.instance_eval{ resolve_args([{:t1 => [:t2, :t3]}])}
     assert_equal [:t1, []], app.instance_eval{ resolve_args([:t1])}
   end
-  def xtest_task_prerequisites
+  def test_task_prerequisites
     runlist = [] 
     t1 = task(:t1 => [:t2, :t3]) {|t| runlist << t.name}
     t2 = task(:t2) {|t| runlist << t.name}

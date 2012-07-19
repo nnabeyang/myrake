@@ -57,6 +57,10 @@ module MyRake
       @action = block
     end
     def invoke
+      @prerequisites.each {|preq_name_sym|
+        preq = MyRake.application.tasks[preq_name_sym.to_s]
+        preq.invoke
+      }
       @action.call(self)
     end
     class << self
