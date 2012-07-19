@@ -11,8 +11,18 @@ module MyRake
     def initialize
       @tasks = {}
     end
-    def define_task(task_class, task_name, &block)
-      @tasks[task_name.to_s] = task_class.new(task_name, &block)
+    def define_task(task_class, *args, &block)
+      task_name, prerequisites = resolve_args(args)
+      @tasks[task_name.to_s] = task_class.new(task_name, prerequisites, &block)
+    end
+    def resolve_args(args)
+       if args.last.kind_of?(Hash)
+         hash = args.pop
+         fail "args.size should be 1" if hash.size != 1
+         return hash.map {|k, v| [k, v]}.first
+       else
+         return [args.first, []]
+       end 
     end
     def run
       handle_options
@@ -41,8 +51,9 @@ module MyRake
   end
   class Task
     attr_reader :name
-    def initialize name, &block
+    def initialize(name, prerequisites, &block)
       @name = name.to_s
+      @prerequisites = prerequisites
       @action = block
     end
     def invoke
@@ -55,6 +66,6 @@ module MyRake
     end
   end
 end
-def task(task_name, &block)
-  MyRake::Task.define_task(task_name, &block)
+def task(*args, &block)
+  MyRake::Task.define_task(*args, &block)
 end

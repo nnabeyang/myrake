@@ -7,7 +7,7 @@ BASEDIR = File.dirname(__FILE__)
 class MyRakeTests < Test::Unit::TestCase
   def test_create_task
     ran = false
-    t = MyRake::Task.new(:task) {|t|
+    t = MyRake::Task.new(:task, []) {|t|
       assert_equal "task", t.name
       ran = true
     }
@@ -59,6 +59,20 @@ class MyRakeTests < Test::Unit::TestCase
     t = task(:t1) { ran = true}
     t.invoke
     assert ran
+    MyRake.application.clear
+  end
+  def test_application_resolve_args
+    app = MyRake::Application.new
+    assert_equal [:t1, [:t2, :t3]], app.instance_eval{ resolve_args([{:t1 => [:t2, :t3]}])}
+    assert_equal [:t1, []], app.instance_eval{ resolve_args([:t1])}
+  end
+  def xtest_task_prerequisites
+    runlist = [] 
+    t1 = task(:t1 => [:t2, :t3]) {|t| runlist << t.name}
+    t2 = task(:t2) {|t| runlist << t.name}
+    t3 = task(:t3) {|t| runlist << t.name}
+    t1.invoke
+    assert_equal ["t2", "t3", "t1"], runlist
     MyRake.application.clear
   end
   def test_load_rakefile
