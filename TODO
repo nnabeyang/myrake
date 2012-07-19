@@ -1,3 +1,2 @@
-- ARGVがemptyのときはusageをエラー出力する 
-  usage: myrake [task_name]+
+- --help, -hでusageを表示
 - tasksをプライベートにする 
