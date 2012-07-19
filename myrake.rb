@@ -1,3 +1,4 @@
+require 'optparse'
 module MyRake  
   class << self
     def application
@@ -14,11 +15,21 @@ module MyRake
       @tasks[task_name.to_s] = task_class.new(task_name, &block)
     end
     def run
+      handle_options
       load_rakefile
       ARGV << "default" if ARGV.empty?
       ARGV.each {|task_name|
         @tasks[task_name].invoke
       }
+    end
+    def handle_options
+      OptionParser.new do |opts|
+        opts.banner = 'myrake {options} targets...'
+        opts.on_tail('-h', '--help', '-H', 'Display this help message.') do
+          puts opts
+          exit
+        end
+      end.parse! 
     end
     def clear
       @tasks.clear
