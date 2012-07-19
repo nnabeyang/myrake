@@ -75,6 +75,15 @@ class MyRakeTests < Test::Unit::TestCase
     assert_equal ["t2", "t3", "t1"], runlist
     MyRake.application.clear
   end
+  def test_task_noblock
+    runlist = []
+    t1 = task(:t1 => [:t2, :t3]) 
+    task(:t2) {|t| runlist << t.name}
+    task(:t3) {|t| runlist << t.name}
+    t1.invoke
+    assert_equal ["t2", "t3"], runlist
+    MyRake.application.clear
+  end
   def test_load_rakefile
     original_dir = Dir.pwd
     Dir.chdir(File.expand_path('../data', __FILE__))

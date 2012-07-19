@@ -54,14 +54,14 @@ module MyRake
     def initialize(name, prerequisites, &block)
       @name = name.to_s
       @prerequisites = prerequisites
-      @action = block
+      @action = (block_given?)? block :nil
     end
     def invoke
       @prerequisites.each {|preq_name_sym|
         preq = MyRake.application.tasks[preq_name_sym.to_s]
         preq.invoke
       }
-      @action.call(self)
+      @action.call(self) if @action
     end
     class << self
       def define_task(task_name, &block)
