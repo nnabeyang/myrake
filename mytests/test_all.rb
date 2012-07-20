@@ -107,6 +107,42 @@ class MyRakeTests < Test::Unit::TestCase
     assert !ft.needed?
     File.delete(fn) rescue nil
   end
+  OLD = "testdata/old"
+  NEW = "testdata/new"
+  def test_file_new_depends_on_old
+    File.delete(OLD) rescue nil
+    File.delete(NEW) rescue nil
+    FileUtils.touch OLD
+    otime = File.stat(OLD).mtime
+    sleep(0.1)
+    FileUtils.touch NEW
+    while otime >= File.stat(NEW).mtime
+      sleep(0.1)
+      FileUtils.touch NEW
+    end
+    MyRake.application.clear
+    t1 = file NEW => [OLD]
+    t2 = file OLD
+    assert !t1.needed?
+    assert !t2.needed?
+  end
+  def test_file_old_depends_on_new
+    File.delete(OLD) rescue nil
+    File.delete(NEW) rescue nil
+    FileUtils.touch OLD
+    otime = File.stat(OLD).mtime
+    sleep(0.1)
+    FileUtils.touch NEW
+    while otime >= File.stat(NEW).mtime
+      sleep(0.1)
+      FileUtils.touch NEW
+    end
+    MyRake.application.clear
+    t1 = file NEW
+    t2 = file OLD => [NEW]
+    assert !t1.needed?
+    assert t2.needed?
+  end
   def test_load_rakefile
     MyRake.application.clear
     original_dir = Dir.pwd

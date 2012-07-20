@@ -1,4 +1,5 @@
 require 'optparse'
+require 'singleton'
 module MyRake  
   class << self
     def application
@@ -73,10 +74,24 @@ module MyRake
     end
   end
   class FileTask < Task
+    def timestamp 
+      (File.exist?(name))? File.stat(name).mtime : MyRake::EARY
+    end
+    def out_of_date?
+      @prerequisites.any? {|n| MyRake::application.tasks[n].timestamp > timestamp}
+    end
     def needed?
-      !File.exist?(name)
+      !File.exist?(name) || out_of_date?
     end
   end
+  class Earytime
+    include Singleton
+    include Comparable
+    def <=>(other)
+      -1
+    end
+  end
+  EARY = Earytime.instance
 end
 def task(*args, &block)
   MyRake::Task.define_task(*args, &block)
