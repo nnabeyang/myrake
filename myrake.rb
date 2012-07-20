@@ -32,13 +32,16 @@ module MyRake
     end
     def run
       handle_options
+      collect_tasks
+      load_rakefile
+      invoke_tasks
+    end
+    def collect_tasks
       @top_level_tasks = []
       ARGV.each {|arg|
         @top_level_tasks << arg unless arg =~ /^-/
       }
-      load_rakefile
       @top_level_tasks << "default" if @top_level_tasks.empty?
-      invoke_tasks
     end
     def invoke_tasks
       @top_level_tasks.each {|task_name|
