@@ -182,9 +182,9 @@ class MyRakeTests < Test::Unit::TestCase
     original_dir = Dir.pwd
     Dir.chdir(File.expand_path('../data', __FILE__))
     ARGV.clear
-    ARGV << "default"
     $stdout = StringIO.new
     MyRake.application.instance_eval{
+      @top_level_tasks = ["default"]
       load_rakefile
       invoke_tasks
     }
@@ -202,7 +202,7 @@ class MyRakeTests < Test::Unit::TestCase
       @rakefile
     })
   end
-  def xtest_task_modifying_argv
+  def test_task_modifying_argv
     ARGV.clear
     ARGV << "-f" << "mod_argv.rake"
     original_dir = Dir.pwd
