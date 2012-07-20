@@ -81,7 +81,7 @@ module MyRake
     end
     def invoke
       @prerequisites.each {|preq_name_sym|
-        preq = MyRake.application.tasks[preq_name_sym.to_s]
+        preq = MyRake.application.lookup(preq_name_sym.to_s, @scope)
         preq.invoke
       }
       @action.call(self) if @action && needed?

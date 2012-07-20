@@ -152,7 +152,7 @@ class MyRakeTests < Test::Unit::TestCase
     assert_equal "ns:t1", t1.name
     assert_equal ["ns"], t1.scope
   end
-  def xtest_namespace_resolve_prerequisites
+  def test_namespace_resolve_prerequisites
     MyRake.application.clear
     t1 = nil
     runlist = []
