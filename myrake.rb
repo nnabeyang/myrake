@@ -60,6 +60,15 @@ module MyRake
     ensure
       @scope.pop
     end
+    def lookup(task_name, scope)
+      n = scope.size
+      while n >= 0
+        task = @tasks[(scope[0, n] + [task_name]).join(':')]
+        return task if task
+        n -= 1
+      end
+      nil
+    end
   end
   class Task
     attr_reader :name

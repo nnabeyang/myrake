@@ -144,6 +144,7 @@ class MyRakeTests < Test::Unit::TestCase
     assert t2.needed?
   end
   def test_namespace
+    MyRake.application.clear
     t1 = nil
     namespace 'ns' do
       t1 = task :t1
@@ -151,7 +152,19 @@ class MyRakeTests < Test::Unit::TestCase
     assert_equal "ns:t1", t1.name
     assert_equal ["ns"], t1.scope
   end
-  def xtest_namespace_lookup
+  def xtest_namespace_resolve_prerequisites
+    MyRake.application.clear
+    t1 = nil
+    runlist = []
+    namespace 'ns' do
+      t1 = task :t1 => [:t2, :t3]
+      task :t2 do|t| runlist << t.name end
+    end
+    task :t3 do|t| runlist << t.name end
+    t1.invoke
+    assert_equal ["ns:t2", "t3"], runlist 
+  end
+  def test_application_lookup
     MyRake.application.clear
     t1 = nil
     t2 = nil
@@ -161,7 +174,7 @@ class MyRakeTests < Test::Unit::TestCase
     end
     assert_nil MyRake.application.lookup("no_such_task", t1.scope)
     assert_equal t2, MyRake.application.lookup("t2", t1.scope)
-    assert_equal t2, MyRake.application.lookup("ns:t2")
+    assert_equal t2, MyRake.application.lookup("ns:t2", [])
   end
   def test_load_rakefile
     MyRake.application.clear
