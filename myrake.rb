@@ -70,12 +70,12 @@ module MyRake
       load path if File.exist? path
     end
     def find_rakefile_location
-      while true 
+      while !File.exist?(File.expand_path(@rakefile))
         here = Dir.pwd
         Dir.chdir('..')
         return nil if here == Dir.pwd
-        return Dir.pwd if File.exist?(File.expand_path(@rakefile))
       end
+      Dir.pwd
     end
     def in_namespace(ns)
       @scope << ns

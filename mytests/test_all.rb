@@ -194,6 +194,15 @@ class MyRakeTests < Test::Unit::TestCase
     MyRake.application.clear
     ARGV.clear
   end
+  def test_find_rakefile_location
+    MyRake.application.clear
+    original_dir = Dir.pwd
+    Dir.chdir(File.expand_path('../data', __FILE__))
+    assert_equal(File.expand_path('../data', __FILE__), MyRake.application.find_rakefile_location)
+    Dir.chdir(original_dir)
+    MyRake.application.clear
+    ARGV.clear
+  end
   def test_find_rakefile_location_from_subdir
     MyRake.application.clear
     original_dir = Dir.pwd
