@@ -64,8 +64,18 @@ module MyRake
       @tasks.clear
     end
     def load_rakefile
+      #location = find_rakefile_location
+      #Dir.chdir(location)
       path = File.expand_path(@rakefile)
       load path if File.exist? path
+    end
+    def find_rakefile_location
+      while true 
+        here = Dir.pwd
+        Dir.chdir('..')
+        return nil if here == Dir.pwd
+        return Dir.pwd if File.exist?(File.expand_path(@rakefile))
+      end
     end
     def in_namespace(ns)
       @scope << ns

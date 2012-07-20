@@ -194,6 +194,33 @@ class MyRakeTests < Test::Unit::TestCase
     MyRake.application.clear
     ARGV.clear
   end
+  def test_find_rakefile_location_from_subdir
+    MyRake.application.clear
+    original_dir = Dir.pwd
+    Dir.chdir(File.expand_path('../data/subdir', __FILE__))
+    assert_equal(File.expand_path('../data', __FILE__), MyRake.application.find_rakefile_location)
+    Dir.chdir(original_dir)
+    MyRake.application.clear
+    ARGV.clear
+  end
+  def xtest_load_rakefile_from_subdir
+    MyRake.application.clear
+    original_dir = Dir.pwd
+    Dir.chdir(File.expand_path('../data/subdir', __FILE__))
+    ARGV.clear
+    $stdout = StringIO.new
+    MyRake.application.instance_eval{
+      collect_tasks
+      load_rakefile
+      invoke_tasks
+    }
+    assert_equal "t1\nt2\ndefault\n", $stdout.string
+    $stdout = STDOUT 
+    Dir.chdir(original_dir)
+    MyRake.application.clear
+    ARGV.clear
+  end
+
   def test_handle_options_use_file_as_rakefile
     ARGV.clear
     ARGV << "-f" << "rakefile1.rake"
