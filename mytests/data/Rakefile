@@ -1,3 +1,3 @@
-task :default do end
-task :t1 do end
-task :t2 do end
+task :default =>[:t1, :t2]do|t| puts t.name end
+task :t1 do|t| puts t.name end
+task :t2 do|t| puts t.name end

@@ -8,7 +8,6 @@ module MyRake
   end
   DEFAULT_RAKEFILE = 'Rakefile'
   class Application
-    attr_reader :tasks
     def initialize
       @scope = []
       @tasks = {}
@@ -34,6 +33,9 @@ module MyRake
       handle_options
       load_rakefile
       ARGV << "default" if ARGV.empty?
+      invoke_tasks
+    end
+    def invoke_tasks
       ARGV.each {|task_name|
         @tasks[task_name].invoke
       }
@@ -103,7 +105,7 @@ module MyRake
       (File.exist?(name))? File.stat(name).mtime : MyRake::EARY
     end
     def out_of_date?
-      @prerequisites.any? {|n| MyRake::application.tasks[n].timestamp > timestamp}
+      @prerequisites.any? {|n| MyRake::application.lookup(n, []).timestamp > timestamp}
     end
     def needed?
       !File.exist?(name) || out_of_date?

@@ -16,11 +16,12 @@ class MyRakeTests < Test::Unit::TestCase
     assert ran
   end
   def test_application_define_task
-    app = MyRake::Application.new
-    [:t1, :t2, :t3].each {|task_name|
-      app.define_task(MyRake::Task, task_name) {}
-    }
-    assert_equal ["t1", "t2", "t3"], app.tasks.keys
+    assert_equal(["t1", "t2", "t3"], MyRake::Application.new.instance_eval{
+      [:t1, :t2, :t3].each {|task_name|
+        define_task(MyRake::Task, task_name) {}
+      }
+      @tasks.keys
+    })
   end
   def test_application_run
     ARGV.clear
@@ -47,13 +48,13 @@ class MyRakeTests < Test::Unit::TestCase
   end
 
   def test_application_clear
-     app = MyRake::Application.new
-    [:t1, :t2, :t3].each {|task_name|
-      app.define_task(MyRake::Task, task_name) {}
-    }
-    assert_equal ["t1", "t2", "t3"], app.tasks.keys
-    app.clear
-    assert_equal({}, app.tasks)
+    assert_equal({}, MyRake::Application.new.instance_eval {
+      [:t1, :t2, :t3].each {|task_name|
+        define_task(MyRake::Task, task_name) {}
+      }
+      clear
+      @tasks
+    })
   end
   def test_task
     ran = false
@@ -180,9 +181,17 @@ class MyRakeTests < Test::Unit::TestCase
     MyRake.application.clear
     original_dir = Dir.pwd
     Dir.chdir(File.expand_path('../data', __FILE__))
-    MyRake.application.load_rakefile
-    assert_equal ["default", "t1", "t2"], MyRake.application.tasks.keys
+    ARGV.clear
+    ARGV << "default"
+    $stdout = StringIO.new
+    MyRake.application.instance_eval{
+      load_rakefile
+      invoke_tasks
+    }
+    assert_equal "t1\nt2\ndefault\n", $stdout.string
+    $stdout = STDOUT 
     Dir.chdir(original_dir)
     MyRake.application.clear
+    ARGV.clear
   end
 end
