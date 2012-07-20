@@ -64,10 +64,8 @@ module MyRake
       @tasks.clear
     end
     def load_rakefile
-      #location = find_rakefile_location
-      #Dir.chdir(location)
-      path = File.expand_path(@rakefile)
-      load path if File.exist? path
+      return unless find_rakefile_location
+      load File.expand_path(@rakefile)
     end
     def find_rakefile_location
       while !File.exist?(File.expand_path(@rakefile))

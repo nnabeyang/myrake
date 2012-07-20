@@ -212,7 +212,7 @@ class MyRakeTests < Test::Unit::TestCase
     MyRake.application.clear
     ARGV.clear
   end
-  def xtest_load_rakefile_from_subdir
+  def test_load_rakefile_from_subdir
     MyRake.application.clear
     original_dir = Dir.pwd
     Dir.chdir(File.expand_path('../data/subdir', __FILE__))
