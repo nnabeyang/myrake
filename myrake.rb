@@ -71,7 +71,7 @@ module MyRake
   end
   class FileTask < Task
     def needed?
-      (File.exist?(name))? false : true
+      !File.exist?(name)
     end
   end
 end
