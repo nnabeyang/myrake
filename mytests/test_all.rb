@@ -84,7 +84,19 @@ class MyRakeTests < Test::Unit::TestCase
     assert_equal ["t2", "t3"], runlist
     MyRake.application.clear
   end
+  def test_file_need
+    MyRake.application.clear
+    fn = "testdata/dummy"
+    ft = file fn
+    assert_equal fn, ft.name
+    File.delete(fn) rescue nil
+    assert ft.needed?
+    open(fn, "w") {|f| f.puts "HI" }
+    assert !ft.needed?
+    File.delete(fn) rescue nil
+  end
   def test_load_rakefile
+    MyRake.application.clear
     original_dir = Dir.pwd
     Dir.chdir(File.expand_path('../data', __FILE__))
     MyRake.application.load_rakefile

@@ -69,7 +69,15 @@ module MyRake
       end
     end
   end
+  class FileTask < Task
+    def needed?
+      (File.exist?(name))? false : true
+    end
+  end
 end
 def task(*args, &block)
   MyRake::Task.define_task(*args, &block)
+end
+def file(*args, &block)
+  MyRake::FileTask.define_task(*args, &block)
 end
