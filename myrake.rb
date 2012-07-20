@@ -13,10 +13,13 @@ module MyRake
       @scope = []
       @tasks = {}
     end
+    def current_scope
+      @scope.dup
+    end
     def define_task(task_class, *args, &block)
       task_name, prerequisites = resolve_args(args)
       task_name = task_class.scope_name(@scope, task_name)
-      @tasks[task_name.to_s] = task_class.new(task_name, prerequisites, &block)
+      @tasks[task_name.to_s] = task_class.new(task_name, prerequisites, self, &block)
     end
     def resolve_args(args)
        if args.last.kind_of?(Hash)
@@ -60,9 +63,11 @@ module MyRake
   end
   class Task
     attr_reader :name
-    def initialize(name, prerequisites, &block)
+    attr_reader :scope
+    def initialize(name, prerequisites, app, &block)
       @name = name.to_s
       @prerequisites = prerequisites
+      @scope = app.current_scope
       @action = (block_given?)? block :nil
     end
     def invoke

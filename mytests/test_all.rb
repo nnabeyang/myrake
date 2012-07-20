@@ -8,7 +8,7 @@ BASEDIR = File.dirname(__FILE__)
 class MyRakeTests < Test::Unit::TestCase
   def test_create_task
     ran = false
-    t = MyRake::Task.new(:task, []) {|t|
+    t = MyRake::Task.new(:task, [], MyRake::Application.new) {|t|
       assert_equal "task", t.name
       ran = true
     }
@@ -148,7 +148,20 @@ class MyRakeTests < Test::Unit::TestCase
     namespace 'ns' do
       t1 = task :t1
     end
-    assert_equal "ns:t1", t1.name 
+    assert_equal "ns:t1", t1.name
+    assert_equal ["ns"], t1.scope
+  end
+  def xtest_namespace_lookup
+    MyRake.application.clear
+    t1 = nil
+    t2 = nil
+    namespace 'ns' do
+      t1 = task :t1
+      t2 = task :t2
+    end
+    assert_nil MyRake.application.lookup("no_such_task", t1.scope)
+    assert_equal t2, MyRake.application.lookup("t2", t1.scope)
+    assert_equal t2, MyRake.application.lookup("ns:t2")
   end
   def test_load_rakefile
     MyRake.application.clear
