@@ -3,6 +3,7 @@
 require 'test/unit'
 require 'myrake'
 require 'stringio'
+require 'fileutils'
 BASEDIR = File.dirname(__FILE__)
 class MyRakeTests < Test::Unit::TestCase
   def test_create_task
@@ -83,6 +84,17 @@ class MyRakeTests < Test::Unit::TestCase
     t1.invoke
     assert_equal ["t2", "t3"], runlist
     MyRake.application.clear
+  end
+  def test_filetask_of_existing_file_without_prerequsites
+    MyRake.application.clear
+    fn = "testdata/dummy"
+    ran = false
+    ft = file fn do ran = true end
+    File.delete(fn) rescue nil
+    open(fn, "w") {|f| f.puts "HI" }
+    ft.invoke
+    assert !ran
+    File.delete(fn) rescue nil
   end
   def test_file_need
     MyRake.application.clear

@@ -61,7 +61,10 @@ module MyRake
         preq = MyRake.application.tasks[preq_name_sym.to_s]
         preq.invoke
       }
-      @action.call(self) if @action
+      @action.call(self) if @action && needed?
+    end
+    def needed?
+      true
     end
     class << self
       def define_task(task_name, &block)
