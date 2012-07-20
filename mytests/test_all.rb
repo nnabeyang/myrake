@@ -184,7 +184,7 @@ class MyRakeTests < Test::Unit::TestCase
     ARGV.clear
     $stdout = StringIO.new
     MyRake.application.instance_eval{
-      @top_level_tasks = ["default"]
+      collect_tasks
       load_rakefile
       invoke_tasks
     }
