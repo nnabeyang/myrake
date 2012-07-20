@@ -11,6 +11,7 @@ module MyRake
     def initialize
       @scope = []
       @tasks = {}
+      @rakefile = DEFAULT_RAKEFILE
     end
     def current_scope
       @scope.dup
@@ -47,13 +48,16 @@ module MyRake
           puts opts
           exit
         end
+        opts.on('--rakefile', '-f [FILE]', 'Use File as Rakefile') do|value|
+          @rakefile = value
+        end
       end.parse! 
     end
     def clear
       @tasks.clear
     end
     def load_rakefile
-      path = File.expand_path(DEFAULT_RAKEFILE)
+      path = File.expand_path(@rakefile)
       load path if File.exist? path
     end
     def in_namespace(ns)

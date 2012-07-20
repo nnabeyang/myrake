@@ -194,4 +194,23 @@ class MyRakeTests < Test::Unit::TestCase
     MyRake.application.clear
     ARGV.clear
   end
+  def test_handle_options_use_file_as_rakefile
+    ARGV.clear
+    ARGV << "-f" << "rakefile1.rake"
+    assert_equal("rakefile1.rake", MyRake::Application.new.instance_eval{
+      handle_options
+      @rakefile
+    })
+  end
+  def xtest_task_modifying_argv
+    ARGV.clear
+    ARGV << "-f" << "mod_argv.rake"
+    original_dir = Dir.pwd
+    Dir.chdir(File.expand_path('../data', __FILE__))
+    $stdout = StringIO.new
+    MyRake.application.run
+    assert_equal("default\n", $stdout.string)
+    $stdout = STDOUT
+    MyRake.application.clear
+  end
 end
