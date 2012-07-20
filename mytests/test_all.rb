@@ -143,6 +143,13 @@ class MyRakeTests < Test::Unit::TestCase
     assert !t1.needed?
     assert t2.needed?
   end
+  def test_namespace
+    t1 = nil
+    namespace 'ns' do
+      t1 = task :t1
+    end
+    assert_equal "ns:t1", t1.name 
+  end
   def test_load_rakefile
     MyRake.application.clear
     original_dir = Dir.pwd

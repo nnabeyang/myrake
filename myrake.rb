@@ -10,10 +10,12 @@ module MyRake
   class Application
     attr_reader :tasks
     def initialize
+      @scope = []
       @tasks = {}
     end
     def define_task(task_class, *args, &block)
       task_name, prerequisites = resolve_args(args)
+      task_name = task_class.scope_name(@scope, task_name)
       @tasks[task_name.to_s] = task_class.new(task_name, prerequisites, &block)
     end
     def resolve_args(args)
@@ -49,6 +51,12 @@ module MyRake
       path = File.expand_path(DEFAULT_RAKEFILE)
       load path if File.exist? path
     end
+    def in_namespace(ns)
+      @scope << ns
+      yield
+    ensure
+      @scope.pop
+    end
   end
   class Task
     attr_reader :name
@@ -68,6 +76,9 @@ module MyRake
       true
     end
     class << self
+      def scope_name(scope, task_name)
+        (scope + [task_name]).join(':')
+      end
       def define_task(task_name, &block)
          MyRake.application.define_task(self, task_name, &block)
       end
@@ -82,6 +93,11 @@ module MyRake
     end
     def needed?
       !File.exist?(name) || out_of_date?
+    end
+    class << self
+      def scope_name(scope, task_name)
+        (scope + [task_name]).join(':')
+      end
     end
   end
   class Earytime
@@ -98,4 +114,7 @@ def task(*args, &block)
 end
 def file(*args, &block)
   MyRake::FileTask.define_task(*args, &block)
+end
+def namespace(ns, &block)
+  MyRake.application.in_namespace(ns, &block)
 end
